@@ -1,6 +1,6 @@
 
 blueprint:
-  name: AI Event Summary (LLM Vision v1.3.1)
+  name: AI Event Summary (LLM Vision v1.3.1 MOZ)
   author: valentinfrlch
   description: >
     AI-powered security event summaries for Frigate or camera entities.
