@@ -1,0 +1,213 @@
+blueprint:
+  author: valentinfrlch
+  description: 'AI-powered security event summaries for Frigate or camera entities.
+    Sends a notification with a preview to your phone that is updated dynamically
+    when the AI summary is available.
+
+    '
+  domain: automation
+  input:
+    camera_entities:
+      default: []
+      description: '(Camera and Frigate mode)
+
+        List of camera entities to monitor
+
+        '
+      name: Camera Entities
+      selector:
+        entity:
+          filter:
+            domain: camera
+          multiple: true
+    cooldown:
+      default: 10
+      description: Time in minutes to wait before running again. Recommended for busy
+        areas.
+      name: Cooldown
+      selector:
+        number:
+          max: 60
+          min: 0
+    detail:
+      default: low
+      description: Detail parameter (OpenAI only)
+      name: Detail
+      selector:
+        select:
+          options:
+          - high
+          - low
+    duration:
+      default: 5
+      description: '(Camera mode only)
+
+        How long to record before analyzing (in seconds)
+
+        '
+      name: Duration
+      selector:
+        number:
+          max: 60
+          min: 1
+    important:
+      default: false
+      description: 'Use AI to classify events into ''critical'', ''normal'' and ''low''.
+        Notifications will only be sent when an event is classified as at least ''normal''.
+        For critical events, the notification will be delivered even if ''Do not disturb''
+        is on. Use with caution: AI can make mistakes.
+
+        '
+      name: Important (Beta)
+      selector:
+        boolean: null
+    max_frames:
+      default: 3
+      description: '(Camera and Frigate mode)
+
+        How many frames to analyze. Picks frames with the most movement.
+
+        '
+      name: Max Frames
+      selector:
+        number:
+          max: 60
+          min: 1
+    max_tokens:
+      default: 20
+      description: Maximum number of tokens to generate. Use this to control the length
+        of the summaries.
+      name: Maximum Tokens
+      selector:
+        number:
+          max: 100
+          min: 1
+    message:
+      default: Summarize what's happening in the camera feed (one sentence max). Don't
+        describe the scene! If there is a person, describe what they're doing and
+        what they look like. If they look like a courier mention that! If nothing
+        is happening, say so.
+      description: Model prompt for the video_analyzer action
+      name: Prompt
+      selector:
+        text:
+          multiline: true
+    mode:
+      description: Select the mode to use
+      name: Mode
+      selector:
+        select:
+          options:
+          - Frigate
+          - Camera
+    model:
+      default: gpt-4o-mini
+      description: Model to use for the video_analyzer action. Leave blank to automatically
+        detect the best model.
+      name: Model
+      selector:
+        text:
+          multiline: false
+    motion_sensors:
+      default: []
+      description: '(Camera mode only)
+
+        Set if your cameras don''t change state. Use the same order used for camera
+        entities.
+
+        '
+      name: Motion Sensor
+      selector:
+        entity:
+          filter:
+            domain: binary_sensor
+          multiple: true
+    notify_device:
+      default: []
+      description: The devices to send the notification to. Multiple devices may be
+        used. Only works with Home Assistant mobile app.
+      name: Notify Device
+      selector:
+        device:
+          filter:
+            integration: mobile_app
+          multiple: true
+    object_type:
+      default: []
+      description: '(Frigate mode only)
+
+        Only run if Frigate labels the object as one of these. (person, dog, bird,
+        etc)
+
+        '
+      name: Included Object Type(s)
+      selector:
+        text:
+          multiline: false
+          multiple: true
+    preview_mode:
+      default: Live Preview
+      description: '(Camera mode only)
+
+        Choose between a live preview or a snapshot of the event
+
+        '
+      name: Preview Mode
+      selector:
+        select:
+          options:
+          - Live Preview
+          - Snapshot
+    provider:
+      description: Provider to use for analysis. See docs for additional information.
+      name: Provider
+      selector:
+        config_entry:
+          integration: llmvision
+    remember:
+      default: false
+      description: Remember this event so you can ask about it later. Event Calendar
+        needs to be configured. If 'important' is set to true, only events classified
+        as 'normal' or higher will be remembered.
+      name: Remember
+      selector:
+        boolean: null
+    tap_navigate:
+      default: /lovelace/0
+      description: "Path to navigate to when notification is opened (e.g. /lovelace/cameras).\n\
+        To use the same input which was sent to the AI engine, use\n  `{{video if\
+        \ video != '' else image}}`\n"
+      name: Tap Navigate
+      selector:
+        text:
+          multiline: false
+    target_width:
+      default: 1280
+      description: Downscale images (uses less tokens and speeds up processing)
+      name: Target Width
+      selector:
+        number:
+          max: 3840
+          min: 512
+    temperature:
+      default: 0.1
+      description: Randomness. Lower is more accurate, higher is more creative.
+      name: Temperature
+      selector:
+        number:
+          max: 1.0
+          min: 0.1
+          step: 0.1
+    trigger_state:
+      default: recording
+      description: '(Camera mode only)
+
+        Trigger the automation when your cameras change to this state.
+
+        '
+      name: Trigger State
+      selector:
+        text:
+          multiline: false
+  name: AI Event Summary (LLM Vision v1.3.1)
+  source_url: https://github.com/valentinfrlch/ha-llmvision/blob/main/blueprints/event_summary.yaml
